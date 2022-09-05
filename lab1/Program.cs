@@ -1,11 +1,12 @@
-﻿
+﻿using System;
+using System.IO;
 class Program
 {
     static void PrintMenu()
     {
         Console.WriteLine("Выбери пункт меню:");
         Console.WriteLine("0 - Выйти из программы");
-        Console.WriteLine("1 - Перевод граудсов");
+        Console.WriteLine("1 - Перевод градусов");
         Console.WriteLine("2 - Определение палиндрома");
         Console.WriteLine("3 - Задача о размножении кроликов");
         Console.WriteLine("4 - Работа с файлами");
@@ -44,11 +45,13 @@ class Program
             if (to == 'K')
             {
                 num += 273.15;
-            } else if (to == 'F')
+            }
+            else if (to == 'F')
             {
                 num = num * 1.8 + 32;
             }
-        } else if (from == 'K')
+        }
+        else if (from == 'K')
         {
             if (to == 'C')
             {
@@ -58,7 +61,8 @@ class Program
             {
                 num = (num - 273.15) * 1.8 + 32;
             }
-        } else
+        }
+        else
         {
             if (to == 'C')
             {
@@ -76,12 +80,12 @@ class Program
     {
         Console.Write("Введите слово: ");
         string? word = Console.ReadLine();
-        if (word?.Length == 0)
+        if (string.IsNullOrEmpty(word))
         {
             Console.WriteLine("Введена пустая строка, нельзя определить палиндром ли это!");
             return;
         }
-        for (int i = 0; i < word.Length; i++)
+        for (int i = 0; i < word.Length / 2; i++)
         {
             if (word[i] != word[word.Length - i - 1])
             {
@@ -90,7 +94,7 @@ class Program
             }
         }
         Console.WriteLine("Это палиндром!");
-    } 
+    }
     static void Rabbit()
     {
         Console.WriteLine("Введите число месяцев:");
@@ -102,13 +106,63 @@ class Program
             count += diff;
             diff = count - diff;
         }
-        Console.WriteLine($"Count of rabbits = {count}");
+        Console.WriteLine($"Число кроликов = {count}");
     }
 
-    static void 
+    static void CSV()
+    {
+        var list = new List<int>();
+        string path = @"D:\Programs\Web\lab1\lab1\data.csv";
+        if (!File.Exists(path))
+        {
+            return;
+        }
+        foreach (string line in File.ReadLines(path))
+        {
+            if (int.TryParse(line, out var result))
+            {
+                list.Add(result);
+            }
+        }
+
+        Console.WriteLine("Что хотите сделать:");
+        Console.WriteLine("1 - Найти максимум");
+        Console.WriteLine("2 - Найти минимум");
+        Console.WriteLine("3 - Посчитать среднее значение");
+        Console.WriteLine("4 - Посчитать исправленную выборочную дисперсию");
+
+    repeat:
+        switch (EnterNumber())
+        {
+            case 1:
+                Console.WriteLine($"Максимум = {list.Max()}");
+                break;
+            case 2:
+                Console.WriteLine($"Минимум = {list.Max()}");
+                break;
+            case 3:
+                Console.WriteLine($"Среднее значение = {((int)list.Average())}");
+                break;
+            case 4:
+                double sum = 0;
+                double average = list.Average();
+                foreach (int value in list)
+                {
+                    sum += Math.Pow(value - average, 2);
+                }
+                double result = sum / (list.Count - 1);
+                Console.WriteLine($"Дисперсия = {result}");
+                break;
+            default:
+                goto repeat;
+        }
+
+
+    }
 
     static bool Run()
     {
+    repeat:
         switch (EnterNumber())
         {
             case 0:
@@ -124,12 +178,11 @@ class Program
                 Rabbit();
                 break;
             case 4:
-                Console.WriteLine("Работа с файлами!");
+                CSV();
                 break;
             default:
                 Console.WriteLine("Некорректные входные данные!");
-                Run();
-                break;
+                goto repeat;
         }
         return true;
     }
@@ -141,6 +194,5 @@ class Program
             PrintMenu();
             isContinued = Run();
         }
-
     }
 }
