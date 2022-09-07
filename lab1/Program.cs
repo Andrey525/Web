@@ -40,38 +40,47 @@ class Program
         {
             Console.WriteLine("Некорректные входные данные!");
         }
-        if (from == 'C')
+        switch (from)
         {
-            if (to == 'K')
-            {
-                num += 273.15;
-            }
-            else if (to == 'F')
-            {
-                num = num * 1.8 + 32;
-            }
-        }
-        else if (from == 'K')
-        {
-            if (to == 'C')
-            {
-                num -= 273.15;
-            }
-            else if (to == 'F')
-            {
-                num = (num - 273.15) * 1.8 + 32;
-            }
-        }
-        else
-        {
-            if (to == 'C')
-            {
-                num = (num - 32) / 1.8;
-            }
-            else if (to == 'K')
-            {
-                num = (num - 32) / 1.8 + 273.15;
-            }
+            case 'C':
+                switch (to)
+                {
+                    case 'K':
+                        num += 273.15;
+                        break;
+                    case 'F':
+                        num = num * 1.8 + 32;
+                        break;
+                    default:
+                        break;
+                }
+                break;
+            case 'K':
+                switch (to)
+                {
+                    case 'C':
+                        num -= 273.15;
+                        break;
+                    case 'F':
+                        num = (num - 273.15) * 1.8 + 32;;
+                        break;
+                    default:
+                        break;
+                }
+                break;
+            case 'F':
+                switch (to)
+                {
+                    case 'C':
+                        num = (num - 32) / 1.8;
+                        break;
+                    case 'K':
+                        num = (num - 32) / 1.8 + 273.15;
+                        break;
+                    default:
+                        break;
+                }
+                break;
         }
         Console.WriteLine($"Результат: {num}");
     }
@@ -115,6 +124,7 @@ class Program
         string path = @"D:\Programs\Web\lab1\lab1\data.csv";
         if (!File.Exists(path))
         {
+            Console.WriteLine($"Файл {path} не существует");
             return;
         }
         foreach (string line in File.ReadLines(path))
@@ -124,14 +134,19 @@ class Program
                 list.Add(result);
             }
         }
+        if (list.Count == 0)
+        {
+            Console.WriteLine("Список чисел пуст");
+            return;
+        }
 
+    repeat:
         Console.WriteLine("Что хотите сделать:");
         Console.WriteLine("1 - Найти максимум");
         Console.WriteLine("2 - Найти минимум");
         Console.WriteLine("3 - Посчитать среднее значение");
         Console.WriteLine("4 - Посчитать исправленную выборочную дисперсию");
 
-    repeat:
         switch (EnterNumber())
         {
             case 1:
@@ -144,6 +159,11 @@ class Program
                 Console.WriteLine($"Среднее значение = {((int)list.Average())}");
                 break;
             case 4:
+                if (list.Count == 1)
+                {
+                    Console.WriteLine("Дисперсия = 0");
+                    break;
+                }
                 double sum = 0;
                 double average = list.Average();
                 foreach (int value in list)
@@ -154,6 +174,7 @@ class Program
                 Console.WriteLine($"Дисперсия = {result}");
                 break;
             default:
+                Console.WriteLine("Некорректные входные данные!");
                 goto repeat;
         }
 
@@ -162,7 +183,6 @@ class Program
 
     static bool Run()
     {
-    repeat:
         switch (EnterNumber())
         {
             case 0:
@@ -182,7 +202,7 @@ class Program
                 break;
             default:
                 Console.WriteLine("Некорректные входные данные!");
-                goto repeat;
+                break;
         }
         return true;
     }
